@@ -54,8 +54,14 @@ namespace DemoGraphApp
             cbxFrequency.DisplayMember = "Display";
             cbxFrequency.ValueMember = "Value";
         }
-
-        public void Add(float[] data, Color color)
+        /// <summary>
+        /// Return Id of Component
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="label"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public string Add(float[] data, string label,  Color color)
         {
             var id = Guid.NewGuid().ToString("N");
             _graphData[id] = new SignalGraphWrapper();
@@ -67,7 +73,9 @@ namespace DemoGraphApp
             button.MouseDown += Button_MouseClick;
             button.MouseMove += Button_MouseMove;
             button.MouseUp += Button_MouseUp;
-            var signalGraph = new SignalGraph(data, (float)cbxPeriod.SelectedValue, (float)cbxFrequency.SelectedValue, new Pen(color,2));
+            var signalGraph = new SignalGraph(data, (float)cbxPeriod.SelectedValue, (float)cbxFrequency.SelectedValue,
+                label,
+                new Pen(color,2));
             _graphData[id].SignalGraph = signalGraph;
             _graphData[id].Button = button;
             signalGraph.Width = graphPanel.Width;
@@ -77,6 +85,17 @@ namespace DemoGraphApp
             button.Top = y;
             buttonPanel.Controls.Add(button);
             graphPanel.Controls.Add(signalGraph);
+            return id;
+        }
+        public bool Remove(string id)
+        {
+            if (!_graphData.ContainsKey(id))
+            {
+                return false;
+            }
+            graphPanel.Controls.Remove(_graphData[id].SignalGraph);
+            buttonPanel.Controls.Remove(_graphData[id].Button);
+            return true;
         }
 
         private void Button_MouseUp(object sender, MouseEventArgs e)

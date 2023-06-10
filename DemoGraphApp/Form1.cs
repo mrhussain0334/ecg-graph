@@ -18,12 +18,26 @@ namespace DemoGraphApp
         {
             InitializeComponent();
         }
-
+        List<string> list = new List<string>();
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var data = JsonConvert.DeserializeObject<float[]>(File.ReadAllText("ecgSampleData.json"));
             data = data.Where(p => p <= 1000).ToArray();
-            graphViewer.Add(data,Color.Red);
+           var id = graphViewer.Add(data,"ECG", Color.Red);
+            list.Add(id);
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                graphViewer.Remove(list.LastOrDefault());
+                list.Remove(list.LastOrDefault());
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

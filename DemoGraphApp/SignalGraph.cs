@@ -14,7 +14,7 @@ namespace DemoGraphApp
         private readonly List<PointF> _points = new List<PointF>();
         private float _period;
         private float _frequency;
-
+        private string label;
 
         private string GetLetter(int a)
         {
@@ -49,7 +49,7 @@ namespace DemoGraphApp
             //do not allow the background to be painted 
 
         }
-        public SignalGraph(float[] data, float period, float frequency, Pen pen = null)
+        public SignalGraph(float[] data, float period, float frequency,string label,  Pen pen = null)
         {
             InitializeComponent();
             this.Height = 50;
@@ -59,6 +59,7 @@ namespace DemoGraphApp
             _data = data;
             _period = period;
             _frequency = frequency;
+            this.label = label;
         }
 
         private void SignalGraph_MouseClick(object sender, MouseEventArgs e)
@@ -84,10 +85,11 @@ namespace DemoGraphApp
             if (_points.Count > 1)
             {
                 e.Graphics.DrawCurve(_pen,_points.ToArray());
+                e.Graphics.DrawString(label, new Font(FontFamily.GenericSansSerif, 5, FontStyle.Regular), new SolidBrush(Color.Green),
+                        new PointF(_points.Last().X + 5, UsableHeight()));
             }
             if (_dots.Count > 0)
             {
-                var height = this.Height * 0.5f;
                 foreach (var item in _dots)
                 {
                     var val = item.Value;
@@ -103,6 +105,11 @@ namespace DemoGraphApp
             }
         }
 
+        private float UsableHeight()
+        {
+                var height = this.Height * 0.5f;
+            return height;
+        }
         public void SetPeriod(float period)
         {
             _period = period;
@@ -118,7 +125,7 @@ namespace DemoGraphApp
             long max = (long)Math.Round(Math.Min(_data.Length, totalValueToTake));
             float pointPerVal = this.Width * 0.5f / max;
             _points.Clear();
-            var height = this.Height * 0.5f;
+            var height = this.UsableHeight();
             var maxVal = 1000;
             
             for (var i = 0; i < max; i++)
